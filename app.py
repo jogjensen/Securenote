@@ -1,4 +1,7 @@
 from flask import Flask, render_template
+import sqlite3
+
+DATABASE = '/PATH TO DB'
 
 app = Flask(__name__)
 

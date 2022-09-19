@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<h1>{{ note['title'] }}</h1>
+<h5>Created: {{ note['created'] }}</h5>
+<p>{{ note['note'] }}</p>
+
+</body>
+</html>

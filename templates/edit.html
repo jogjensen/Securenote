@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
-    <title>Securenote</title>
+    <title>Title</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
 
-<h1 style="text-align: center">Welcome</h1>
-<h2 style="text-align: center">Securenote is very secure</h2>
-<p style="text-align: center">Are notes are stored with best encryption yes</p>
+<h1>{{ note['title'] }}</h1>
+<h5>Created: {{ note['created'] }}</h5>
+<p>{{ note['note'] }}</p>
 
-<div class="container">
-    <form method="post">
+<form method="post">
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" name="title" placeholder="Giv din note en titel">
+            <input type="text" name="edited_title" placeholder="Ny titel">
         </div>
 
         <div class="form-group">
             <label for="content">Content</label>
-            <textarea name="note" placeholder="Indtast din note..."
+            <textarea name="edited_note" placeholder="Ny note"
                       class="form-control"></textarea>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
-</div>
 
 </body>
 </html>

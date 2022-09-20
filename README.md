@@ -5,6 +5,8 @@ School project for softwaresecurity
 Made by bloom9900 & jogjensen
 
 
+
+
 Instructions
 1. Clone project
 2. Change DB path in app.py line 16

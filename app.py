@@ -23,7 +23,7 @@ def home():
 def user_form():
     if request.method == 'POST':
         title = request.form['title']
-        note = request.form['note']
+        note = request.form['cryptTextArea']
 
         if not title:
             flash('Der skal benyttes en titel!')

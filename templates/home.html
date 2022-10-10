@@ -1,12 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <title>Securenote</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+
+<script>
+    function getMessageEncoding() {
+        const note = document.getElementById("note").value;
+        console.log(note);
+        let enc = new TextEncoder();
+        return enc.encode(note);
+    }
+
+    async function createKey() {
+        let key = await window.crypto.subtle.generateKey(
+            {
+                name: "AES-CBC",
+                length: 256
+            },
+            true,
+            ["encrypt", "decrypt"]
+        );
+        const exported = await window.crypto.subtle.exportKey("raw", key);
+        document.getElementById("generatedKey").innerHTML = "Key:  " + new Uint8Array(exported);
+        return key;
+    }
+
+    async function encrypt(iv, key, encodedNote) {
+        let result = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-CBC",
+                iv: iv
+            },
+            key,
+            encodedNote
+        )
+        console.log("Result: " +result)
+        var decoder = new TextDecoder("utf-8");
+
+        let cipherTextRaw = decoder.decode(result);
+
+        let buffer = new Uint8Array(result);
+
+        let cipherTextArr = `${buffer}...[${result.byteLength} bytes total]`;
+        document.getElementById("cryptTextArea").value =
+            "Krypteret besked: " + cipherTextRaw;
+
+        document.getElementById("encodedTextArea").value =
+            "Krypteret besked: " + cipherTextArr;
+        //HER KRYPTERER VI NOTETEXT
+        return
+    }
+
+    function test() {
+
+        // Encode Note
+        const note = document.getElementById("note").value;
+        let encoder = new TextEncoder();
+        let encodedNote = encoder.encode(note);
+
+        let iv = window.crypto.getRandomValues(new Uint8Array(16));
+        document.getElementById("generatedIV").innerHTML = "IV:  " + iv;
+
+        const key = createKey()
+
+        encrypt(iv, key, encodedNote);
+
+        return false;
+    }
+
+    async function encode() {
+        let encoded = getMessageEncoding();
+
+        // iv will be needed for decryption
+        let iv = window.crypto.getRandomValues(new Uint8Array(16));
+        //alert(iv);
+        document.getElementById("generatedIV").innerHTML = iv;
+
+        let key = await window.crypto.subtle.generateKey(
+            {
+                name: "AES-CBC",
+                length: 256
+            },
+            true,
+            ["encrypt", "decrypt"]
+        );
+
+        const exported = await window.crypto.subtle.exportKey("raw", key);
+        document.getElementById("generatedKey").innerHTML = new Uint8Array(exported);
+
+        let result = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-CBC",
+                iv: iv
+            },
+            key,
+            encoded
+        );
+
+        var decoder = new TextDecoder("utf-8");
+
+        let cipherTextRaw = decoder.decode(result);
+
+        let buffer = new Uint8Array(result);
+
+        let cipherTextArr = `${buffer}...[${result.byteLength} bytes total]`;
+        document.getElementById("cryptTextArea").value =
+            "Krypteret besked: " + cipherTextRaw;
+
+        document.getElementById("encodedTextArea").value =
+            "Krypteret besked: " + cipherTextArr;
+        //HER KRYPTERER VI NOTETEXT
+
+    }
+
+    function getMessageEncoding() {
+        let message = document.getElementById("noteTextArea").value;
+        let enc = new TextEncoder();
+        return enc.encode(message);
+    }
+
+    function encryptMessage(key) {
+        let encoded = getMessageEncoding();
+        // iv will be needed for decryption
+        iv = window.crypto.getRandomValues(new Uint8Array(16));
+        return window.crypto.subtle.encrypt(
+            {
+                name: "AES-CBC",
+                iv: iv
+            },
+            key,
+            encoded
+        );
+    }
+
+</script>
 
 <h1 style="text-align: center">Welcome</h1>
 <h2 style="text-align: center">Securenote is very secure</h2>
@@ -21,14 +152,25 @@
 
         <div class="form-group">
             <label for="content">Content</label>
-            <textarea name="note" placeholder="Indtast din note..."
+            <textarea type="text" id="note" name="note" placeholder="Indtast din note..."
                       class="form-control"></textarea>
         </div>
         <div class="form-group">
+            <button onClick="return test()">Kryptér</button>
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
 </div>
+
+<label>IV og key</label><br />
+<div id="generatedIV">...</div>
+<div id="generatedKey">...</div>
+
+<label>Kryptotekst som tekst</label><br />
+<textarea class="cryptTextarea" id="cryptTextArea">...</textarea><br /><br />
+
+<label>Kryptotekst som byte array</label><br />
+<textarea class="encodedTextarea" id="encodedTextArea">...</textarea><br />
 
 </body>
 </html>
